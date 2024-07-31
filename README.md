@@ -9,3 +9,16 @@ Maintain mapping between Sets and Variables for a Linear Program
 
 Stored as HDF5 file
 Mapped to OSI model 
+
+Required packages
+```bash
+
+# cmake
+sudo apt install cmake gcc clang gdb build-essential
+
+# HDF5 and Boost
+sudo apt install libhdf5-serial-dev libboost-all-dev
+
+# COIN-OR
+sudo apt install coinor-clp coinor-libosi-dev coinor-libcoinutils-dev coinor-libclp-dev
+```
