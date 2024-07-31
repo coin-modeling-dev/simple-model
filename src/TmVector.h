@@ -28,7 +28,7 @@ namespace tensormodel {
             zeroDim = true;
         }
 
-        explicit TmVector(TmSet &s1, TmSet &s2 = TmSet(), TmSet &s3 = TmSet(), TmSet &s4 = TmSet(), TmSet &s5 = TmSet())
+        explicit TmVector(const TmSet &s1, const TmSet &s2 = TmSet(), const TmSet &s3 = TmSet(), const TmSet &s4 = TmSet(), const TmSet &s5 = TmSet())
                 :
                 TmIndexed(s1.getNum(), s2.getNum(), s3.getNum(), s4.getNum(), s5.getNum()) {
             try {
@@ -52,6 +52,10 @@ namespace tensormodel {
                 this->setDim(5);
 
             zeroDim = false;
+        }
+
+        double getValue(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+            return  d_[index(i1, i2, i3, i4, i5)];
         }
 
         double operator()(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {

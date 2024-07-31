@@ -6,7 +6,7 @@
 
 using namespace tensormodel;
 
-TensorModel::p_TmVariable
+p_TmVariable
 TensorModel::createColumn(string t_variableName,
                           int t,
                           const TmSet &s1,
@@ -21,7 +21,7 @@ TensorModel::createColumn(string t_variableName,
     return tmVariable;
 }
 
-TensorModel::p_TmVariable
+p_TmVariable
 TensorModel::createRow(string t_variableName,
                        int t,
                        const TmSet &s1,
@@ -155,7 +155,7 @@ void TensorModel::loadSM_Data() {
 
 }
 
-void TensorModel::loadOsiProblem(OsiClpSolverInterface *osi) {
+void TensorModel::loadOsiProblem(OsiSolverInterface *osi) {
     this->setSolver(osi);
     this->getSolver()->loadProblem(mat, dclo, dcup, dobj, drlo, drup);
 }

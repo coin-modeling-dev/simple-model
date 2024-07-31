@@ -118,6 +118,8 @@ namespace tensormodel {
         }
     };
 
+    typedef shared_ptr<TmVariable> p_TmVariable;
+
 }
 
 #endif //TENSORMODEL_TMVARIABLE_H

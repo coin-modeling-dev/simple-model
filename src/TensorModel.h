@@ -19,7 +19,9 @@
 #include <coin/OsiSolverInterface.hpp>
 #include <coin/CoinPackedVector.hpp>
 #include <coin/CoinPackedMatrix.hpp>
-#include <coin/OsiClpSolverInterface.hpp>
+
+// TODO find out how to install OsiClpSolverInterface
+// #include <coin/OsiClpSolverInterface.hpp>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -41,6 +43,7 @@ namespace tensormodel {
 
 // Tensor Model class
     class TensorModel {
+
     private:
         OsiSolverInterface *osi_;
         double *dclo{}, *dcup{}, *dobj{}, *drlo{}, *drup{};
@@ -55,8 +58,6 @@ namespace tensormodel {
         double infinity;
 
         bool isMatrixLoaded;
-
-        typedef shared_ptr<TmVariable> p_TmVariable;
 
         map<string, p_TmVariable> rowObjects;
         map<string, p_TmVariable> colObjects;
@@ -100,7 +101,7 @@ namespace tensormodel {
 
         void loadSM_Data();
 
-        void loadOsiProblem(OsiClpSolverInterface *osi);
+        void loadOsiProblem(OsiSolverInterface *osi);
 
         void solveProblem();
 
@@ -154,6 +155,8 @@ namespace tensormodel {
         double *getRup() { return drup; }
 
         CoinPackedMatrix &getMat() { return mat; }
+
+
     };
 
 

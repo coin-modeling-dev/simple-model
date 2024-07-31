@@ -26,6 +26,9 @@ INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIR})
 # Boost
 find_package(Boost COMPONENTS system filesystem date_time)
 
+# Zlib
+find_package(ZLIB REQUIRED "1.0")
+
 # Include H5 libraries to build the flow target (the only one we're building right now)
 target_link_libraries(test ${HDF5_CXX_LIBRARIES} ${Boost_LIBRARIES})
 
@@ -33,5 +36,5 @@ target_link_libraries(test ${HDF5_CXX_LIBRARIES} ${Boost_LIBRARIES})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/../rapidjson/include)
 
 # COIN-OR Clp
-target_link_libraries(test Clp CoinUtils Osi OsiClp)
+target_link_libraries(test Clp CoinUtils Osi)
 
