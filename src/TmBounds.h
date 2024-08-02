@@ -20,7 +20,7 @@ namespace tensormodel {
         double *upper;
         bool ownTmData;
     public:
-        explicit TmBounds(int s) {
+        explicit TmBounds(unsigned int s) {
             try {
                 lower = new double[s];
                 memset(lower, 0, s * sizeof(double));
@@ -55,12 +55,12 @@ namespace tensormodel {
             }
         }
 
-        void load(int n, double dl, double du) {
+        void load(unsigned int n, double dl, double du) {
             lower[n] = dl;
             upper[n] = du;
         }
 
-        void display(int n, ostream &out) {
+        void display(unsigned int n, ostream &out) {
             out << lower[n] << ", " << upper[n];
         }
 

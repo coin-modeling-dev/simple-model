@@ -25,18 +25,18 @@ namespace tensormodel {
 
     class TmIndexed {
     private:
-        int s1;
-        int s2;
-        int s3;
-        int s4;
-        int s5;
-        int size_{};
-        int dim{};
-        array<int, TM_MAX_DIM> v{};
-        array<int, TM_MAX_DIM> s{};
+        unsigned int s1;
+        unsigned int s2;
+        unsigned int s3;
+        unsigned int s4;
+        unsigned int s5;
+        unsigned int size_{};
+        unsigned int dim{};
+        array<unsigned int, TM_MAX_DIM> v{};
+        array<unsigned int, TM_MAX_DIM> s{};
 
     protected:
-        void setDim(int i) {
+        void setDim(unsigned int i) {
             dim = i;
         }
 
@@ -47,7 +47,7 @@ namespace tensormodel {
             init();
         }
 
-        explicit TmIndexed(array<int, TM_MAX_DIM> arr) :
+        explicit TmIndexed(array<unsigned int, TM_MAX_DIM> arr) :
                 s1(arr[0]), s2(arr[1]), s3(arr[2]), s4(arr[3]), s5(arr[4]) {
             init();
 
@@ -78,7 +78,7 @@ namespace tensormodel {
             }
         } indexingError;
 
-        int index(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+        unsigned int index(unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) const {
             if (i1 >= s1 || i2 >= s2 || i3 >= s3 || i4 >= s4 || i5 >= s5) {
                 cerr << "index: ";
                 int i = 0;
@@ -104,7 +104,7 @@ namespace tensormodel {
                 throw indexingError;
             }
 
-            int i = i1;
+            unsigned int i = i1;
             i *= s2;
             i += i2;
             i *= s3;
@@ -116,7 +116,7 @@ namespace tensormodel {
             return i;
         }
 
-        const array<int, 5> invIndex(int n) {
+        array<unsigned int, 5> invIndex(unsigned int n) {
             if (n >= size_) {
                 cerr << "invIndex: size " << n << " out of range.\n";
                 throw indexingError;
@@ -133,7 +133,7 @@ namespace tensormodel {
             return v;
         }
 
-        explicit TmIndexed(int i1 = 1, int i2 = 1, int i3 = 1, int i4 = 1, int i5 = 1) :
+        explicit TmIndexed(unsigned int i1 = 1, unsigned int i2 = 1, unsigned int i3 = 1, unsigned int i4 = 1, unsigned int i5 = 1) :
                 s1(i1), s2(i2), s3(i3), s4(i4), s5(i5), size_(i1 * i2 * i3 * i4 * i5) {
             init();
         }
@@ -166,19 +166,19 @@ namespace tensormodel {
 
         unsigned int getDim() const { return dim; }
 
-        const array<int, TM_MAX_DIM> &getDimSizes() {
+        const array<unsigned int, TM_MAX_DIM> &getDimSizes() {
             return s;
         };
 
-        unsigned int getDimSize(int i) const {
+        unsigned int getDimSize(unsigned int i) const {
             //assert(i>0 && i<dim+1 && "Dimension must be between 1 and 5." );
             return s[i - 1];
         }
 
-        void testIndex(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
-            int n = this->index(i1, i2, i3, i4, i4);
+        void testIndex(unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) {
+            unsigned int n = this->index(i1, i2, i3, i4, i4);
 
-            int i = 0;
+            unsigned int i = 0;
             cout << "[" << i1;
             i++;
             if (i < dim) {
@@ -204,11 +204,11 @@ namespace tensormodel {
 
         }
 
-        void testInvIndex(int n) {
+        void testInvIndex(unsigned int n) {
             this->invIndex(n);
             cout << "index " << n << " equals ";
             cout << "[" << v[0];
-            for (int i = 1; i < dim; i++) {
+            for (unsigned int i = 1; i < dim; i++) {
                 cout << "," << v[i];
             }
             cout << "]\n";
@@ -217,19 +217,19 @@ namespace tensormodel {
             cout << " equals index " << n << "\n";
         }
 
-        void display(int n) {
+        void display(unsigned int n) {
             this->invIndex(n);
             cout << "[" << v[0];
-            for (int i = 1; i < dim; i++) {
+            for (unsigned int i = 1; i < dim; i++) {
                 cout << "," << v[i];
             }
             cout << "]";
         }
 
-        void display(int n, ostream &out) {
+        void display(unsigned int n, ostream &out) {
             this->invIndex(n);
             out << "[" << v[0];
-            for (int i = 1; i < dim; i++) {
+            for (unsigned int i = 1; i < dim; i++) {
                 out << "," << v[i];
             }
             out << "]";

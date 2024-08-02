@@ -18,20 +18,20 @@ namespace tensormodel {
 
     private:
         string name_;
-        int offset_{};
+        unsigned int offset_{};
         TmBounds *b_{};
         TmObjective *obj_{};
-        int stage_{};
+        unsigned int stage_{};
         bool hasObjective{};  // only columns have objectives
 
     public:
         TmVariable() = default;
 
-        TmVariable(const string &name, unsigned int t, const TmSet &s1 = TmSet(), const TmSet &s2 = TmSet(),
+        explicit TmVariable(const string &name, const TmSet &s1 = TmSet(), const TmSet &s2 = TmSet(),
                    const TmSet &s3 = TmSet(),
                    const TmSet &s4 = TmSet(), const TmSet &s5 = TmSet()) :
                 TmNamed(name),
-                TmIndexed(s1.getNum(), s2.getNum(), s3.getNum(), s4.getNum(), s5.getNum()), b_(), stage_(t),
+                TmIndexed(s1.getNum(), s2.getNum(), s3.getNum(), s4.getNum(), s5.getNum()), b_(), stage_(0),
                 hasObjective(false) {
             this->setDim(0);
             if (!s1.isEmptySet())
@@ -46,27 +46,22 @@ namespace tensormodel {
                 this->setDim(5);
         }
 
-        virtual ~TmVariable() {
-            delete b_;
-            if (hasObjective)
-                delete obj_;
-        }
 
         void setHasObjective() {
             hasObjective = true;
         }
 
-        int operator()(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+        unsigned int operator()(unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) {
             return index(i1, i2, i3, i4, i5) + this->getOffset();
         }
 
-        void loadBnd(int n, double dl, double du) {
-            n -= this->getOffset();
-            b_->load(n, dl, du);
+        void loadBnd(unsigned int n, double dl, double du) {
+            n += this->getOffset();
+            b_->load(n + this->getOffset(), dl, du);
         }
 
-        void loadObj(int n, double o) {
-            n -= this->getOffset();
+        void loadObj(unsigned int n, double o) {
+            n += this->getOffset();
             obj_->load(n, o);
         }
 
@@ -74,13 +69,13 @@ namespace tensormodel {
 
         TmObjective *getObjective() { return obj_; }
 
-        int getStage() { return stage_; }
+        unsigned int getStage() const { return stage_; }
 
         void setStage(unsigned int s) { stage_ = s; }
 
-        void setOffset(int i) { offset_ = i; }
+        void setOffset(unsigned int i) { offset_ = i; }
 
-        int getOffset() { return offset_; }
+        unsigned int getOffset() const { return offset_; }
 
         void display(ostream &out) {
             for (unsigned int n = 0; n < this->getSize(); n++) {

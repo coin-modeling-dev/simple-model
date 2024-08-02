@@ -7,14 +7,9 @@
 using namespace tensormodel;
 
 p_TmVariable
-TensorModel::createColumn(string t_variableName,
-                          int t,
-                          const TmSet &s1,
-                          const TmSet &s2,
-                          const TmSet &s3,
-                          const TmSet &s4,
+TensorModel::createColumn(const string& t_variableName, const TmSet &s1, const TmSet &s2, const TmSet &s3, const TmSet &s4,
                           const TmSet &s5) {
-    p_TmVariable tmVariable = std::make_shared<TmVariable>(t_variableName, t, s1, s2, s3, s4, s5);
+    p_TmVariable tmVariable = std::make_shared<TmVariable>(t_variableName, s1, s2, s3, s4, s5);
     tmVariable->setOffset(ncols);
     colObjects.insert(make_pair(t_variableName, tmVariable));
     ncols += tmVariable->getSize();
@@ -22,21 +17,16 @@ TensorModel::createColumn(string t_variableName,
 }
 
 p_TmVariable
-TensorModel::createRow(string t_variableName,
-                       int t,
-                       const TmSet &s1,
-                       const TmSet &s2,
-                       const TmSet &s3,
-                       const TmSet &s4,
+TensorModel::createRow(const string& t_variableName, const TmSet &s1, const TmSet &s2, const TmSet &s3, const TmSet &s4,
                        const TmSet &s5) {
-    p_TmVariable tmVariable = std::make_shared<TmVariable>(t_variableName, t, s1, s2, s3, s4, s5);
+    p_TmVariable tmVariable = std::make_shared<TmVariable>(t_variableName, s1, s2, s3, s4, s5);
     tmVariable->setOffset(nrows);
     rowObjects.insert(make_pair(t_variableName, tmVariable));
     nrows += tmVariable->getSize();
     return tmVariable;
 }
 
-void TensorModel::display(ostream &out, string matrixFile) {
+void TensorModel::display(ostream &out, const string& matrixFile) {
 
     out << "ROWS:\n";
     for (auto row : rowObjects) {
@@ -48,9 +38,9 @@ void TensorModel::display(ostream &out, string matrixFile) {
         col.second->display(out);
     }
 
-    out << "MATRIX:\n";
+    out << "MATRIX: \n" << "\tWritten to " << matrixFile.c_str() << "\n";
 
-    mat.dumpMatrix(matrixFile.c_str());
+    mat->dumpMatrix(matrixFile.c_str());
 }
 
 void TensorModel::initializeDataStructures() {
@@ -60,14 +50,14 @@ void TensorModel::initializeDataStructures() {
         dclo = new double[ncols];
         dcup = new double[ncols];
         dobj = new double[ncols];
-        cstg = new int[ncols];
+        cstg = new unsigned int[ncols];
         memset(dclo, 0, ncols * sizeof(double));
         memset(dcup, 0, ncols * sizeof(double));
         memset(dobj, 0, ncols * sizeof(double));
         memset(cstg, 0, ncols * sizeof(int));
         drlo = new double[nrows];
         drup = new double[nrows];
-        rstg = new int[nrows];
+        rstg = new unsigned int[nrows];
         memset(drlo, 0, nrows * sizeof(double));
         memset(drup, 0, nrows * sizeof(double));
         memset(rstg, 0, nrows * sizeof(int));
@@ -78,10 +68,10 @@ void TensorModel::initializeDataStructures() {
 
     for (auto row: rowObjects) {
         auto p_row = row.second;
-        int offset = p_row->getOffset();
+        unsigned int offset = p_row->getOffset();
         p_row->initializeDataStructures(drlo + offset, drup + offset);
 
-        int stage = p_row->getStage();
+        unsigned int stage = p_row->getStage();
         for (unsigned int ii = 0; ii < p_row->getSize(); ii++) {
             rstg[ii + offset] = stage;
         }
@@ -89,10 +79,11 @@ void TensorModel::initializeDataStructures() {
     }
     for (auto col: colObjects) {
         auto p_col = col.second;
-        int offset = p_col->getOffset();
+        p_col->setHasObjective();
+        unsigned int offset = p_col->getOffset();
         p_col->initializeDataStructures(dclo + offset, dcup + offset, dobj + offset);
 
-        int stage = p_col->getStage();
+        unsigned int stage = p_col->getStage();
         for (unsigned int jj = 0; jj < p_col->getSize(); jj++) {
             cstg[jj + offset] = stage;
         }
@@ -102,7 +93,7 @@ void TensorModel::initializeDataStructures() {
 
 void TensorModel::loadMat(int m, int n, double d) {
     if (isMatrixLoaded) {
-        mat.modifyCoefficient(m, n, d);
+        mat->modifyCoefficient(m, n, d);
     } else {
         mrow.push_back(m);
         mcol.push_back(n);
@@ -114,54 +105,18 @@ void TensorModel::loadSM_Data() {
     //matrix
     if (this->isMatrixLoaded) return;
 
-    int icol = 0;
-    const unsigned int nels = mcol.size();
-    indices = new int[nels];
-    colStart = new int[ncols + 1];
-    elements = new double[nels];
-    for (unsigned int j = 0; j < ncols + 1; j++)
-        colStart[j] = 0;
-    for (unsigned int n = 0; n < nels; n++) {
-        int j = mcol[n];
-        colStart[j]++;
-        //cout<<"index "<<j<<" colstart "<<colStart[j]<<"\n";
-    }
-    colStart[ncols] = nels;
-    icol = ncols - 1;
-    while (icol > -1) {
-        colStart[icol] = colStart[icol + 1] - colStart[icol];
-        icol--;
-    }
-    for (unsigned int n = 0; n < nels; n++) {
-        icol = mcol[n];
-        int nn = colStart[icol];
-        indices[nn] = mrow[n];
-        elements[nn] = dels[n];
-        colStart[icol]++;
-    }
-    int next1 = colStart[0];
-    int next2 = 0;
-    colStart[0] = 0;
-    for (unsigned int j = 1; j < ncols + 1; j++) {
-        next2 = colStart[j];
-        colStart[j] = next1;
-        next1 = next2;
-        //cout<<"index "<<j<<" colstart "<<colStart[j]<<"\n";
-    }
-    int *len = nullptr;
-    mat.assignMatrix(true, nrows, ncols, nels, elements, indices, colStart, len);
-
+    mat = new CoinPackedMatrix(true, mrow.data(), mcol.data(), dels.data(), dels.size());
     isMatrixLoaded = true;
 
 }
 
 void TensorModel::loadOsiProblem(OsiSolverInterface *osi) {
     this->setSolver(osi);
-    this->getSolver()->loadProblem(mat, dclo, dcup, dobj, drlo, drup);
+    this->getSolver()->loadProblem(reinterpret_cast<const CoinPackedMatrix &>(mat), dclo, dcup, dobj, drlo, drup);
 }
 
 void TensorModel::solveProblem() {
-    this->getSolver()->loadProblem(mat, dclo, dcup, dobj, drlo, drup);
+    this->getSolver()->loadProblem(reinterpret_cast<const CoinPackedMatrix &>(mat), dclo, dcup, dobj, drlo, drup);
     this->getSolver()->setObjSense(-1);
     this->getSolver()->initialSolve();
 }

@@ -15,6 +15,9 @@ string TmSet::getNameByIndx(const unsigned int index) const {
 }
 
 unsigned int TmSet::getIndxByName(const string name) const {
+    if (!this->existsName(name)){
+        throw setError;
+    }
     return names.left.at(name);
 }
 

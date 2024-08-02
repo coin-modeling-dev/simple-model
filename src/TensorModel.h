@@ -47,12 +47,13 @@ namespace tensormodel {
     private:
         OsiSolverInterface *osi_;
         double *dclo{}, *dcup{}, *dobj{}, *drlo{}, *drup{};
-        int *cstg{}, *rstg{};
-        int *indices{}, *colStart{};
+        unsigned int *cstg{}, *rstg{};
+        unsigned int *indices{}, *colStart{};
         double *elements{};
-        vector<int> mcol, mrow;
+        vector<int> mcol;
+        vector<int> mrow;
         vector<double> dels;
-        CoinPackedMatrix mat;
+        CoinPackedMatrix *mat;
         unsigned int nrows;
         unsigned int ncols;
         double infinity;
@@ -80,18 +81,9 @@ namespace tensormodel {
             isMatrixLoaded = false;
         }
 
-        ~TensorModel() {
 
-            delete[] dclo;
-            delete[] dcup;
-            delete[] dobj;
-            delete[] drlo;
-            delete[] drup;
-            delete[] cstg;
-            delete[] rstg;
-        }
 
-        void display(ostream &out, string matrixFile);
+        void display(ostream &out, const string& matrixFile);
 
         void setSolver(OsiSolverInterface *osi) { osi_ = osi; }
 
@@ -115,34 +107,26 @@ namespace tensormodel {
 
         void displayRows(ostream &out, const string &s, const double *d);
 
-        double getInfinity() { return infinity; }
+        double getInfinity() const { return infinity; }
 
-        p_TmVariable createColumn(string t_variableName,
-                                  int t,
-                                  const TmSet &s1 = TmSet(),
-                                  const TmSet &s2 = TmSet(),
+        p_TmVariable createColumn(const string& t_variableName, const TmSet &s1 = TmSet(), const TmSet &s2 = TmSet(),
                                   const TmSet &s3 = TmSet(),
-                                  const TmSet &s4 = TmSet(),
-                                  const TmSet &s5 = TmSet());
+                                  const TmSet &s4 = TmSet(), const TmSet &s5 = TmSet());
 
-        p_TmVariable createRow(string t_variableName,
-                               int t,
-                               const TmSet &s1 = TmSet(),
-                               const TmSet &s2 = TmSet(),
+        p_TmVariable createRow(const string& t_variableName, const TmSet &s1 = TmSet(), const TmSet &s2 = TmSet(),
                                const TmSet &s3 = TmSet(),
-                               const TmSet &s4 = TmSet(),
-                               const TmSet &s5 = TmSet());
+                               const TmSet &s4 = TmSet(), const TmSet &s5 = TmSet());
 
 
         void loadMat(int m, int n, double d);
 
-        int *getRowStages() { return rstg; }
+        unsigned int *getRowStages() { return rstg; }
 
-        int *getColStages() { return cstg; }
+        unsigned int *getColStages() { return cstg; }
 
-        int getNrows() { return nrows; }
+        unsigned int getNrows() const { return nrows; }
 
-        int getNcols() { return ncols; }
+        unsigned int getNcols() const { return ncols; }
 
         double *getClo() { return dclo; }
 
@@ -154,7 +138,7 @@ namespace tensormodel {
 
         double *getRup() { return drup; }
 
-        CoinPackedMatrix &getMat() { return mat; }
+        CoinPackedMatrix *getMat() { return mat; }
 
 
     };

@@ -43,14 +43,14 @@ namespace tensormodel {
         TmSet(unsigned int n, const string &name_set, unsigned int max_num = 0) {
             this->setName(name_set);
             num = max(n, max_num);
-            for (unsigned int i = 0; i < n; i++) {
-                IDs.push_back(i);
-                this->insertName(i);
-            }
+            //for (unsigned int i = 0; i < n; i++) {
+            //    IDs.push_back(i);
+            //    this->insertName(i);
+            //}
             isEmpty = false;
         }
 
-        const bool isEmptySet() const { return isEmpty; }
+        bool isEmptySet() const { return isEmpty; }
 
         unsigned int getNum() const { return num; }
 
@@ -60,7 +60,7 @@ namespace tensormodel {
 
         unsigned int getIndxByName(string) const;
 
-        bool existsName(const string &name) {
+        bool existsName(const string &name) const {
             auto itr = names.left.find(name);
             return (itr != names.left.end());
         }
@@ -73,7 +73,7 @@ namespace tensormodel {
         unsigned int addName(const string &name) {
             unsigned int indx = names.size();
             if (!existsName(name)) {
-                if (indx + 1 > num)
+                if (indx > num)
                     throw runtime_error("Adding name to set violates maximum names set at initialization.");
                 names.insert(names_position(name, indx));
             }
@@ -89,7 +89,7 @@ namespace tensormodel {
         void insertName(unsigned int indx, const string &name = "") {
             if (indx > num)
                 throw runtime_error("Adding name to set violates maximum names set at initialization.");
-            if (name.length() == 0) {
+            if (name.empty()) {
                 ostringstream tmp;
                 tmp << this->getName() << indx;
                 names.insert(names_position(tmp.str(), indx));
@@ -97,8 +97,6 @@ namespace tensormodel {
                 names.insert(names_position(name, indx));
             }
         }
-
-        void initialize(string fileLoc);
 
         virtual ~TmSet() = default;
 

@@ -32,7 +32,7 @@ namespace tensormodel {
                 :
                 TmIndexed(s1.getNum(), s2.getNum(), s3.getNum(), s4.getNum(), s5.getNum()) {
             try {
-                int sz = this->getSize();
+                unsigned int sz = this->getSize();
                 d_ = new double[sz];
                 memset(d_, 0, sz * sizeof(double));
             }
@@ -54,11 +54,11 @@ namespace tensormodel {
             zeroDim = false;
         }
 
-        double getValue(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+        double getValue(unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) {
             return  d_[index(i1, i2, i3, i4, i5)];
         }
 
-        double operator()(int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+        double operator()(unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) {
             return d_[index(i1, i2, i3, i4, i5)];
         }
 
@@ -85,7 +85,7 @@ namespace tensormodel {
 
 
 
-        void setValue(double d, int i1 = 0, int i2 = 0, int i3 = 0, int i4 = 0, int i5 = 0) {
+        void setValue(double d, unsigned int i1 = 0, unsigned int i2 = 0, unsigned int i3 = 0, unsigned int i4 = 0, unsigned int i5 = 0) {
             //cout << "Setting value "<<d<< " for index "<< i1 << " " << i2 << " " << i3 << " " << i4 << " " << i5 << endl;
             d_[index(i1, i2, i3, i4, i5)] = d;
         }
